@@ -80,18 +80,18 @@ const complianceBadges = [
 
 export default function SiteFooter() {
     return (
-        <footer className="bg-navy-950 relative isolate overflow-hidden text-white">
+        <footer className="via-brand-50/50 to-brand-50 text-navy-900 relative isolate overflow-hidden bg-gradient-to-b from-white">
             <div className="pointer-events-none absolute inset-0 -z-10">
-                <div className="bg-brand-600/20 absolute -top-40 left-1/4 size-[40rem] rounded-full blur-[140px]" />
+                <div className="bg-brand-100/50 absolute -top-40 left-1/4 size-[40rem] rounded-full blur-[140px]" />
                 <div className="bg-cyan-glow/10 absolute right-[-10%] bottom-0 size-[36rem] rounded-full blur-[140px]" />
-                <div className="bg-grid-dark absolute inset-0 opacity-60" />
+                <div className="bg-grid-fade absolute inset-0" />
             </div>
-            <div className="via-cyan-glow/60 h-px w-full bg-gradient-to-r from-transparent to-transparent" />
+            <div className="via-brand-200 h-px w-full bg-gradient-to-r from-transparent to-transparent" />
 
             <div className="mx-auto max-w-[88rem] px-4 sm:px-8">
-                <div className="flex flex-col items-start justify-between gap-8 border-b border-white/10 py-14 lg:flex-row lg:items-center">
+                <div className="border-brand-100 flex flex-col items-start justify-between gap-8 border-b py-14 lg:flex-row lg:items-center">
                     <div className="max-w-2xl">
-                        <p className="text-cyan-glow text-sm font-semibold tracking-wider uppercase">
+                        <p className="text-brand-600 text-sm font-semibold tracking-wider uppercase">
                             Stop leaving revenue on the table
                         </p>
                         <h2 className="font-display mt-3 text-3xl font-bold tracking-tight text-balance sm:text-5xl">
@@ -102,16 +102,16 @@ export default function SiteFooter() {
                         <BrandButton
                             href={contact()}
                             size="lg"
-                            className="btn-shine from-cyan-glow to-brand-400 text-navy-950 h-14 rounded-2xl bg-gradient-to-r shadow-[0_20px_50px_-12px_rgb(34_195_221/0.6)]"
+                            className="btn-shine h-14 rounded-2xl"
                         >
                             Get Your Free Audit
                             <ArrowRight className="size-5 transition-transform group-hover:translate-x-1" />
                         </BrandButton>
                         <a
                             href={`tel:${contactDetails.phone}`}
-                            className="inline-flex h-14 items-center gap-3 rounded-2xl border border-white/15 bg-white/5 px-6 font-semibold backdrop-blur transition hover:bg-white/10"
+                            className="text-navy-900 hover:border-brand-300 inline-flex h-14 items-center gap-3 rounded-2xl border border-slate-200 bg-white px-6 font-semibold transition"
                         >
-                            <Phone className="text-cyan-glow size-5" />
+                            <Phone className="text-brand-600 size-5" />
                             {contactDetails.phone}
                         </a>
                     </div>
@@ -119,26 +119,29 @@ export default function SiteFooter() {
 
                 <div className="grid gap-12 py-16 lg:grid-cols-12">
                     <div className="flex flex-col gap-6 lg:col-span-4">
-                        <AbMalinexLogo inverted size="lg" />
-                        <p className="text-brand-100/70 max-w-sm leading-relaxed">
+                        <AbMalinexLogo
+                            layout="stacked"
+                            className="h-32 self-start"
+                        />
+                        <p className="max-w-sm leading-relaxed text-slate-600">
                             We help healthcare providers maximize revenue and
                             improve cash flow through expert medical billing,
                             coding and revenue cycle management.
                         </p>
-                        <ul className="text-brand-100/80 flex flex-col gap-3 text-sm">
+                        <ul className="flex flex-col gap-3 text-sm text-slate-600">
                             <li>
                                 <a
                                     href={`mailto:${contactDetails.email}`}
-                                    className="group flex items-center gap-3 transition-colors hover:text-white"
+                                    className="group hover:text-brand-600 flex items-center gap-3 transition-colors"
                                 >
-                                    <span className="text-cyan-glow flex size-9 items-center justify-center rounded-xl border border-white/10 bg-white/5">
+                                    <span className="text-brand-600 border-brand-100 flex size-9 items-center justify-center rounded-xl border bg-white">
                                         <Mail className="size-4" />
                                     </span>
                                     {contactDetails.email}
                                 </a>
                             </li>
                             <li className="flex items-center gap-3">
-                                <span className="text-cyan-glow flex size-9 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/5">
+                                <span className="text-brand-600 border-brand-100 flex size-9 shrink-0 items-center justify-center rounded-xl border bg-white">
                                     <MapPin className="size-4" />
                                 </span>
                                 <span>
@@ -147,13 +150,13 @@ export default function SiteFooter() {
                                 </span>
                             </li>
                             <li className="flex items-center gap-3">
-                                <span className="text-cyan-glow flex size-9 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/5">
+                                <span className="text-brand-600 border-brand-100 flex size-9 shrink-0 items-center justify-center rounded-xl border bg-white">
                                     <Clock className="size-4" />
                                 </span>
                                 {contactDetails.hours}
                             </li>
                         </ul>
-                        <SocialLinks />
+                        <SocialLinks tone="light" />
                     </div>
 
                     <div className="grid grid-cols-2 gap-10 sm:grid-cols-3 lg:col-span-5">
@@ -162,7 +165,7 @@ export default function SiteFooter() {
                                 key={column.title}
                                 className="flex flex-col gap-5"
                             >
-                                <p className="font-display text-sm font-semibold tracking-wider text-white uppercase">
+                                <p className="font-display text-navy-900 text-sm font-semibold tracking-wider uppercase">
                                     {column.title}
                                 </p>
                                 <ul className="flex flex-col gap-3">
@@ -170,7 +173,7 @@ export default function SiteFooter() {
                                         <li key={link.label}>
                                             <Link
                                                 href={link.href}
-                                                className="group text-brand-100/70 inline-flex items-center gap-1 text-sm transition-colors hover:text-white"
+                                                className="group hover:text-brand-600 inline-flex items-center gap-1 text-sm text-slate-600 transition-colors"
                                             >
                                                 {link.label}
                                                 <ArrowUpRight className="size-3.5 -translate-x-1 opacity-0 transition-all group-hover:translate-x-0 group-hover:opacity-100" />
@@ -183,11 +186,11 @@ export default function SiteFooter() {
                     </div>
 
                     <div className="lg:col-span-3">
-                        <div className="glass-dark flex flex-col gap-4 rounded-3xl p-6">
+                        <div className="ring-brand-100 flex flex-col gap-4 rounded-3xl bg-white p-6 shadow-[0_20px_50px_-24px_rgb(10_35_66/0.25)] ring-1">
                             <p className="font-display text-lg font-bold">
                                 Billing insights, monthly
                             </p>
-                            <p className="text-brand-100/70 text-sm">
+                            <p className="text-sm text-slate-600">
                                 Payer updates, coding changes and RCM tips. Join
                                 4,000+ practice leaders.
                             </p>
@@ -208,30 +211,30 @@ export default function SiteFooter() {
                                     name="email"
                                     required
                                     placeholder="you@practice.com"
-                                    className="bg-navy-950/60 placeholder:text-brand-100/40 focus:border-cyan-glow/60 focus:ring-cyan-glow/15 h-12 rounded-xl border border-white/10 px-4 text-sm text-white focus:ring-4 focus:outline-none"
+                                    className="text-navy-900 focus:border-brand-400 focus:ring-brand-100 h-12 rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm placeholder:text-slate-400 focus:ring-4 focus:outline-none"
                                 />
                                 <button
                                     type="submit"
-                                    className="btn-shine text-navy-900 hover:bg-brand-50 flex h-12 items-center justify-center gap-2 rounded-xl bg-white text-sm font-semibold transition"
+                                    className="btn-shine bg-brand-600 hover:bg-brand-700 flex h-12 items-center justify-center gap-2 rounded-xl text-sm font-semibold text-white transition"
                                 >
                                     Subscribe
                                     <Send className="size-4" />
                                 </button>
                             </Form>
-                            <p className="text-brand-100/50 text-xs">
+                            <p className="text-xs text-slate-400">
                                 No spam. Unsubscribe anytime.
                             </p>
                         </div>
                     </div>
                 </div>
 
-                <div className="flex flex-wrap items-center justify-center gap-3 border-t border-white/10 py-8 lg:justify-between">
+                <div className="border-brand-100 flex flex-wrap items-center justify-center gap-3 border-t py-8 lg:justify-between">
                     {complianceBadges.map((badge) => (
                         <span
                             key={badge.label}
-                            className="text-brand-100/80 flex items-center gap-2.5 rounded-full border border-white/10 bg-white/[0.03] px-4 py-2 text-sm"
+                            className="border-brand-100 flex items-center gap-2.5 rounded-full border bg-white px-4 py-2 text-sm text-slate-600"
                         >
-                            <badge.icon className="text-cyan-glow size-4" />
+                            <badge.icon className="text-brand-600 size-4" />
                             {badge.label}
                         </span>
                     ))}
@@ -242,13 +245,13 @@ export default function SiteFooter() {
                 aria-hidden="true"
                 className="font-display pointer-events-none mx-auto -mb-[0.2em] max-w-[88rem] px-4 text-center text-[17vw] leading-none font-extrabold tracking-[-0.05em] select-none sm:px-8 2xl:text-[15rem]"
             >
-                <span className="bg-gradient-to-b from-white/[0.14] to-white/0 bg-clip-text text-transparent">
+                <span className="from-brand-200/80 to-brand-100/0 bg-gradient-to-b bg-clip-text text-transparent">
                     AbMalinex
                 </span>
             </div>
 
-            <div className="bg-navy-950/80 relative border-t border-white/10 backdrop-blur">
-                <div className="text-brand-100/60 mx-auto flex max-w-[88rem] flex-col items-center justify-between gap-4 px-4 py-6 text-sm sm:px-8 md:flex-row">
+            <div className="border-brand-100 relative border-t bg-white/70 backdrop-blur">
+                <div className="mx-auto flex max-w-[88rem] flex-col items-center justify-between gap-4 px-4 py-6 text-sm text-slate-500 sm:px-8 md:flex-row">
                     <p>
                         © {new Date().getFullYear()} AbMalinex Health & IT
                         Services. All rights reserved.
@@ -256,19 +259,19 @@ export default function SiteFooter() {
                     <div className="flex flex-wrap items-center justify-center gap-6">
                         <a
                             href="#"
-                            className="transition-colors hover:text-white"
+                            className="hover:text-brand-600 transition-colors"
                         >
                             Privacy Policy
                         </a>
                         <a
                             href="#"
-                            className="transition-colors hover:text-white"
+                            className="hover:text-brand-600 transition-colors"
                         >
                             Terms of Service
                         </a>
                         <a
                             href="#"
-                            className="transition-colors hover:text-white"
+                            className="hover:text-brand-600 transition-colors"
                         >
                             HIPAA Notice
                         </a>
@@ -278,7 +281,7 @@ export default function SiteFooter() {
                                 window.scrollTo({ top: 0, behavior: 'smooth' })
                             }
                             aria-label="Back to top"
-                            className="hover:border-cyan-glow/60 hover:text-cyan-glow flex size-10 items-center justify-center rounded-full border border-white/15 bg-white/5 text-white transition hover:-translate-y-0.5"
+                            className="hover:border-brand-300 hover:text-brand-600 text-navy-900 flex size-10 items-center justify-center rounded-full border border-slate-200 bg-white transition hover:-translate-y-0.5"
                         >
                             <ArrowUp className="size-4" />
                         </button>

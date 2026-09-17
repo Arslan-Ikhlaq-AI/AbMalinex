@@ -23,7 +23,6 @@ export default function SiteHeader() {
     const { isCurrentUrl } = useCurrentUrl();
     const [hasScrolled, setHasScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-    const isOverDarkHero = isCurrentUrl(home()) && !hasScrolled;
 
     useEffect(() => {
         const handleScroll = () => setHasScrolled(window.scrollY > 12);
@@ -40,12 +39,17 @@ export default function SiteHeader() {
                 className={cn(
                     'mx-auto flex items-center justify-between gap-6 rounded-2xl px-4 transition-all duration-500 sm:px-6',
                     hasScrolled
-                        ? 'h-16 max-w-6xl border border-white/60 bg-white/80 shadow-[0_10px_40px_-12px_rgb(10_35_66/0.25)] backdrop-blur-xl'
+                        ? 'h-[4.25rem] max-w-6xl border border-white/70 bg-white/85 shadow-[0_10px_40px_-12px_rgb(10_35_66/0.2)] backdrop-blur-xl'
                         : 'h-20 max-w-7xl border border-transparent bg-transparent',
                 )}
             >
                 <Link href={home()} aria-label="AbMalinex home" prefetch>
-                    <AbMalinexLogo inverted={isOverDarkHero} />
+                    <AbMalinexLogo
+                        className={cn(
+                            'origin-left transition-transform duration-500',
+                            hasScrolled && 'scale-90',
+                        )}
+                    />
                 </Link>
 
                 <nav className="hidden items-center gap-1 lg:flex">
@@ -56,14 +60,10 @@ export default function SiteHeader() {
                                     href={link.href}
                                     prefetch
                                     className={cn(
-                                        'flex items-center gap-1 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
-                                        isOverDarkHero
-                                            ? 'text-white/80 hover:text-white'
-                                            : 'hover:text-brand-600',
-                                        !isOverDarkHero &&
-                                            (isCurrentUrl(link.href)
-                                                ? 'text-brand-600'
-                                                : 'text-navy-900/80'),
+                                        'hover:text-brand-600 flex items-center gap-1 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+                                        isCurrentUrl(link.href)
+                                            ? 'text-brand-600'
+                                            : 'text-navy-900/80',
                                     )}
                                 >
                                     {link.label}
@@ -100,14 +100,10 @@ export default function SiteHeader() {
                                 prefetch
                                 className={cn(
                                     'relative rounded-lg px-3 py-2 text-sm font-medium transition-colors after:absolute after:inset-x-3 after:-bottom-0.5 after:h-0.5 after:rounded-full',
-                                    isOverDarkHero
-                                        ? 'after:bg-cyan-glow text-white/80 hover:text-white'
-                                        : 'text-navy-900/80 after:bg-brand-500 hover:text-brand-600',
+                                    'after:bg-brand-500 hover:text-brand-600',
                                     isCurrentUrl(link.href)
-                                        ? isOverDarkHero
-                                            ? 'text-white'
-                                            : 'text-brand-600'
-                                        : 'after:hidden',
+                                        ? 'text-brand-600'
+                                        : 'text-navy-900/80 after:hidden',
                                 )}
                             >
                                 {link.label}
@@ -120,11 +116,7 @@ export default function SiteHeader() {
                     <BrandButton
                         href={contact()}
                         size="sm"
-                        className={cn(
-                            'btn-shine hidden sm:inline-flex',
-                            isOverDarkHero &&
-                                'from-cyan-glow to-brand-400 text-navy-950 bg-gradient-to-r shadow-[0_10px_30px_-10px_rgb(34_195_221/0.8)]',
-                        )}
+                        className="btn-shine hidden sm:inline-flex"
                     >
                         Get Free Audit
                         <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
@@ -135,12 +127,7 @@ export default function SiteHeader() {
                         onOpenChange={setIsMobileMenuOpen}
                     >
                         <SheetTrigger
-                            className={cn(
-                                'flex size-10 items-center justify-center rounded-xl border lg:hidden',
-                                isOverDarkHero
-                                    ? 'border-white/20 bg-white/10 text-white backdrop-blur'
-                                    : 'text-navy-900 border-slate-200 bg-white/80',
-                            )}
+                            className="text-navy-900 flex size-10 items-center justify-center rounded-xl border border-slate-200 bg-white/80 lg:hidden"
                             aria-label="Open menu"
                         >
                             <Menu className="size-5" />

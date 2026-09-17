@@ -353,7 +353,9 @@ function PortalPreview() {
             <div className="relative flex overflow-hidden rounded-3xl border border-white/70 bg-slate-50 shadow-[0_40px_100px_-30px_rgb(10_35_66/0.55)] ring-1 ring-slate-900/5">
                 <aside className="bg-navy-900 hidden w-48 shrink-0 flex-col gap-1 p-3 text-white sm:flex">
                     <div className="mb-3 flex items-center gap-2 px-2 py-2">
-                        <AbMalinexMark className="size-7" />
+                        <span className="flex size-9 items-center justify-center rounded-lg bg-white p-1">
+                            <AbMalinexMark className="h-full" />
+                        </span>
                         <span className="text-sm font-bold">AbMalinex</span>
                     </div>
                     {portalNavigation.map((item) => (

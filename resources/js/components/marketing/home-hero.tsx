@@ -1,20 +1,16 @@
 import {
     ArrowRight,
-    BadgeCheck,
     CheckCircle2,
-    Clock3,
-    FileCheck2,
+    HeartHandshake,
     Play,
     ShieldCheck,
     Star,
-    TrendingDown,
-    TrendingUp,
 } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
-import type { PointerEvent as ReactPointerEvent } from 'react';
+import { useRef } from 'react';
+import type { CSSProperties, PointerEvent as ReactPointerEvent } from 'react';
+import { AbMalinexMark } from '@/components/marketing/abmalinex-logo';
 import AnimatedCounter from '@/components/marketing/animated-counter';
 import BrandButton from '@/components/marketing/brand-button';
-import ConstellationCanvas from '@/components/marketing/constellation-canvas';
 import {
     Dialog,
     DialogContent,
@@ -23,50 +19,13 @@ import {
     DialogTrigger,
 } from '@/components/ui/dialog';
 import { heroStats } from '@/lib/marketing-content';
-import { cn } from '@/lib/utils';
 import { contact } from '@/routes';
-
-const rotatingWords = ['Healthcare', 'Revenue', 'Billing', 'Practices'];
-
-const claimEvents = [
-    {
-        claim: 'CLM-20931',
-        payer: 'Medicare',
-        amount: '$1,240.00',
-        status: 'Paid',
-    },
-    {
-        claim: 'CLM-20932',
-        payer: 'Aetna',
-        amount: '$860.50',
-        status: 'Approved',
-    },
-    {
-        claim: 'CLM-20925',
-        payer: 'Cigna',
-        amount: '$430.00',
-        status: 'Appeal won',
-    },
-    { claim: 'CLM-20934', payer: 'BCBS', amount: '$2,115.00', status: 'Paid' },
-    {
-        claim: 'CLM-20936',
-        payer: 'UnitedHealth',
-        amount: '$975.25',
-        status: 'Approved',
-    },
-    {
-        claim: 'CLM-20938',
-        payer: 'Humana',
-        amount: '$1,582.40',
-        status: 'Paid',
-    },
-];
 
 export const processSteps = [
     {
         title: 'Free Revenue Audit',
         description:
-            'We analyze 90 days of claims, denials and A/R to find hidden revenue leaks.',
+            'We review your claims, denials and A/R to find where revenue is slipping away.',
     },
     {
         title: 'Seamless Onboarding',
@@ -79,305 +38,46 @@ export const processSteps = [
             'Certified coders and billers submit accurate claims within 24 hours of service.',
     },
     {
-        title: 'Grow & Optimize',
+        title: 'Grow With Confidence',
         description:
-            'Live dashboards and monthly strategy reviews keep your collections climbing.',
+            'Regular check-ins and clear reporting keep your practice moving forward.',
     },
 ];
 
-function usePrefersReducedMotion(): boolean {
-    const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
-
-    useEffect(() => {
-        setPrefersReducedMotion(
-            window.matchMedia('(prefers-reduced-motion: reduce)').matches,
-        );
-    }, []);
-
-    return prefersReducedMotion;
-}
+const reassurances = [
+    'HIPAA compliant',
+    'No long-term contracts',
+    'U.S.-based support',
+];
 
 /**
- * Runs a callback on an interval unless the visitor prefers reduced motion.
+ * Offsets a parallax layer by the pointer position stored on the hero.
  */
-function useLiveInterval(callback: () => void, delay: number): void {
-    const prefersReducedMotion = usePrefersReducedMotion();
-    const callbackRef = useRef(callback);
-
-    useEffect(() => {
-        callbackRef.current = callback;
-    });
-
-    useEffect(() => {
-        if (prefersReducedMotion) {
-            return;
-        }
-
-        const interval = window.setInterval(() => callbackRef.current(), delay);
-
-        return () => window.clearInterval(interval);
-    }, [delay, prefersReducedMotion]);
-}
-
-function RotatingWord() {
-    const [wordIndex, setWordIndex] = useState(0);
-
-    useLiveInterval(
-        () => setWordIndex((index) => (index + 1) % rotatingWords.length),
-        2800,
-    );
-
-    return (
-        <span className="relative inline-block">
-            <span className="invisible" aria-hidden="true">
-                Healthcare
-            </span>
-            <span
-                key={rotatingWords[wordIndex]}
-                className="animate-word-in absolute inset-0 whitespace-nowrap"
-            >
-                <span className="text-gradient-hero animate-gradient-pan">
-                    {rotatingWords[wordIndex]}
-                </span>
-            </span>
-        </span>
-    );
-}
-
-function LiveDashboard() {
-    const [collectionsToday, setCollectionsToday] = useState(48392.1);
-    const [claimsProcessed, setClaimsProcessed] = useState(1248);
-    const [bars, setBars] = useState([
-        38, 52, 44, 61, 55, 70, 64, 78, 72, 84, 80, 92, 88, 96,
-    ]);
-    const [eventOffset, setEventOffset] = useState(0);
-    const [tilt, setTilt] = useState({ x: 0, y: 0 });
-
-    useLiveInterval(() => {
-        setCollectionsToday((total) => total + Math.random() * 180 + 40);
-        setClaimsProcessed((count) => count + Math.round(Math.random() * 2));
-    }, 1400);
-
-    useLiveInterval(() => {
-        setBars((current) => [
-            ...current.slice(1),
-            Math.round(60 + Math.random() * 40),
-        ]);
-    }, 1800);
-
-    useLiveInterval(() => {
-        setEventOffset((offset) => (offset + 1) % claimEvents.length);
-    }, 2600);
-
-    const visibleEvents = [0, 1, 2].map(
-        (position) =>
-            claimEvents[(eventOffset + position) % claimEvents.length],
-    );
-
-    const handlePointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
-        const bounds = event.currentTarget.getBoundingClientRect();
-        const relativeX = (event.clientX - bounds.left) / bounds.width - 0.5;
-        const relativeY = (event.clientY - bounds.top) / bounds.height - 0.5;
-
-        setTilt({ x: relativeY * -8, y: relativeX * 10 });
+function parallaxLayer(depth: number): CSSProperties {
+    return {
+        transform: `translate3d(calc(var(--pointer-x, 0) * ${depth}px), calc(var(--pointer-y, 0) * ${depth}px), 0)`,
     };
-
-    return (
-        <div
-            onPointerMove={handlePointerMove}
-            onPointerLeave={() => setTilt({ x: 0, y: 0 })}
-            className="relative mx-auto w-full max-w-[540px] min-w-0 [perspective:1400px]"
-        >
-            <div
-                className="relative transition-transform duration-300 ease-out [transform-style:preserve-3d]"
-                style={{
-                    transform: `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`,
-                }}
-            >
-                <div className="glass-dark relative overflow-hidden rounded-[1.75rem] p-6">
-                    <div className="bg-cyan-glow/25 pointer-events-none absolute -top-24 -right-20 size-64 rounded-full blur-3xl" />
-
-                    <div className="relative flex items-center justify-between">
-                        <div>
-                            <p className="text-brand-100/60 text-xs font-medium tracking-wider uppercase">
-                                Revenue Command Center
-                            </p>
-                            <p className="text-sm font-semibold text-white">
-                                Heartline Cardiology
-                            </p>
-                        </div>
-                    </div>
-
-                    <div className="relative mt-4 flex items-end justify-between gap-4">
-                        <div>
-                            <p className="text-brand-100/70 text-sm">
-                                Collected today
-                            </p>
-                            <p className="font-display text-3xl font-extrabold tracking-tight text-white tabular-nums sm:text-5xl">
-                                $
-                                {collectionsToday.toLocaleString('en-US', {
-                                    minimumFractionDigits: 2,
-                                    maximumFractionDigits: 2,
-                                })}
-                            </p>
-                            <p className="mt-1 flex items-center gap-1 text-xs font-semibold text-emerald-300">
-                                <TrendingUp className="size-3.5" />
-                                +12.4% vs last week
-                            </p>
-                        </div>
-                        <div className="flex h-20 items-end gap-1">
-                            {bars.map((height, index) => (
-                                <span
-                                    key={index}
-                                    className={cn(
-                                        'w-1.5 rounded-full transition-all duration-700 ease-out sm:w-2',
-                                        index < 6 && 'hidden sm:block',
-                                        index === bars.length - 1
-                                            ? 'bg-cyan-glow shadow-[0_0_12px_rgb(34_195_221/0.9)]'
-                                            : 'from-brand-500/40 to-cyan-glow/80 bg-gradient-to-t',
-                                    )}
-                                    style={{ height: `${height}%` }}
-                                />
-                            ))}
-                        </div>
-                    </div>
-
-                    <div className="relative mt-6 grid grid-cols-3 gap-3">
-                        {[
-                            {
-                                label: 'Clean claims',
-                                value: '98.7%',
-                                icon: FileCheck2,
-                            },
-                            {
-                                label: 'Denial rate',
-                                value: '1.6%',
-                                icon: TrendingDown,
-                            },
-                            { label: 'Days in A/R', value: '18', icon: Clock3 },
-                        ].map((metric) => (
-                            <div
-                                key={metric.label}
-                                className="rounded-2xl border border-white/10 bg-white/5 p-3"
-                            >
-                                <metric.icon className="text-cyan-glow size-4" />
-                                <p className="font-display mt-2 text-lg font-bold text-white">
-                                    {metric.value}
-                                </p>
-                                <p className="text-brand-100/60 text-[0.65rem]">
-                                    {metric.label}
-                                </p>
-                            </div>
-                        ))}
-                    </div>
-
-                    <div className="relative mt-5 flex flex-col gap-2">
-                        <p className="text-brand-100/60 flex items-center gap-2 text-xs font-medium">
-                            <span className="relative flex size-2">
-                                <span className="animate-pulse-ring absolute inset-0 rounded-full bg-emerald-400" />
-                                <span className="relative size-2 rounded-full bg-emerald-400" />
-                            </span>
-                            Real-time claim activity
-                        </p>
-                        {visibleEvents.map((claimEvent, position) => (
-                            <div
-                                key={`${claimEvent.claim}-${eventOffset}-${position}`}
-                                className={cn(
-                                    'flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2.5',
-                                    position === 0 &&
-                                        'animate-feed-in border-cyan-glow/30 bg-cyan-glow/10',
-                                )}
-                            >
-                                <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-emerald-400/15 text-emerald-300">
-                                    <CheckCircle2 className="size-4" />
-                                </span>
-                                <span className="flex min-w-0 flex-1 flex-col">
-                                    <span className="truncate text-xs font-semibold text-white">
-                                        {claimEvent.claim} · {claimEvent.status}
-                                    </span>
-                                    <span className="text-brand-100/60 text-[0.65rem]">
-                                        {claimEvent.payer} ·{' '}
-                                        {position === 0
-                                            ? 'just now'
-                                            : `${position * 3}s ago`}
-                                    </span>
-                                </span>
-                                <span className="text-sm font-bold text-emerald-300 tabular-nums">
-                                    +{claimEvent.amount}
-                                </span>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-
-                <div className="glass-dark animate-float absolute -top-9 -right-3 hidden [transform:translateZ(60px)] items-center gap-3 rounded-2xl p-3 pr-4 sm:flex lg:-right-10">
-                    <svg viewBox="0 0 36 36" className="size-11 -rotate-90">
-                        <circle
-                            cx="18"
-                            cy="18"
-                            r="15"
-                            fill="none"
-                            stroke="rgb(255 255 255 / 0.12)"
-                            strokeWidth="4"
-                        />
-                        <circle
-                            cx="18"
-                            cy="18"
-                            r="15"
-                            fill="none"
-                            stroke="#22c3dd"
-                            strokeWidth="4"
-                            strokeLinecap="round"
-                            strokeDasharray={`${0.987 * 94.2} 94.2`}
-                        />
-                    </svg>
-                    <span className="flex flex-col">
-                        <span className="text-brand-100/70 text-[0.65rem]">
-                            Claims processed
-                        </span>
-                        <span className="font-display text-lg font-bold text-white tabular-nums">
-                            {claimsProcessed.toLocaleString('en-US')}
-                        </span>
-                    </span>
-                </div>
-
-                <div className="glass-dark animate-float absolute -bottom-12 -left-4 hidden [transform:translateZ(80px)] items-center gap-3 rounded-2xl p-3 pr-5 [animation-delay:-3s] sm:flex lg:-left-12">
-                    <span className="from-cyan-glow text-navy-950 flex size-10 items-center justify-center rounded-xl bg-gradient-to-br to-emerald-400">
-                        <ShieldCheck className="size-5" />
-                    </span>
-                    <span className="flex flex-col">
-                        <span className="text-sm font-bold text-white">
-                            HIPAA Compliant
-                        </span>
-                        <span className="text-brand-100/70 text-[0.65rem]">
-                            256-bit encrypted · BAA signed
-                        </span>
-                    </span>
-                </div>
-            </div>
-        </div>
-    );
 }
 
 function HowItWorksDialog() {
     return (
         <Dialog>
-            <DialogTrigger className="group inline-flex h-14 items-center gap-3 rounded-2xl border border-white/15 bg-white/5 pr-6 pl-2 text-base font-semibold text-white backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 hover:border-white/30 hover:bg-white/10">
-                <span className="text-navy-900 relative flex size-10 items-center justify-center rounded-xl bg-white">
-                    <span className="animate-pulse-ring absolute inset-0 rounded-xl bg-white/60" />
-                    <Play className="relative size-4 fill-current" />
+            <DialogTrigger className="group text-navy-900 hover:text-brand-700 inline-flex h-14 items-center gap-3 rounded-2xl pr-5 pl-2 text-base font-semibold transition-colors">
+                <span className="text-brand-600 ring-brand-100 relative flex size-11 items-center justify-center rounded-full bg-white shadow-[0_8px_24px_-8px_rgb(23_111_147/0.45)] ring-1 transition-transform duration-300 group-hover:scale-105">
+                    <span className="animate-pulse-ring ring-brand-300 absolute inset-0 rounded-full ring-2" />
+                    <Play className="relative ml-0.5 size-4 fill-current" />
                 </span>
-                Watch How It Works
+                See How It Works
             </DialogTrigger>
             <DialogContent className="font-display text-navy-900 max-w-2xl overflow-hidden border-none bg-white p-0 sm:rounded-3xl">
-                <div className="from-navy-950 via-navy-800 to-brand-700 relative overflow-hidden bg-gradient-to-br p-8 text-white">
-                    <div className="bg-cyan-glow/30 pointer-events-none absolute -top-16 -right-10 size-56 rounded-full blur-3xl" />
+                <div className="from-brand-50 to-brand-100/60 relative overflow-hidden bg-gradient-to-br via-white p-8">
+                    <div className="bg-cyan-glow/15 pointer-events-none absolute -top-16 -right-10 size-56 rounded-full blur-3xl" />
                     <DialogTitle className="font-display relative text-2xl font-bold">
                         How AbMalinex Works
                     </DialogTitle>
-                    <DialogDescription className="text-brand-100/80 relative">
-                        From first audit to predictable cash flow in four simple
-                        steps.
+                    <DialogDescription className="relative text-slate-600">
+                        A simple, proven path from your first conversation to a
+                        healthier revenue cycle.
                     </DialogDescription>
                 </div>
                 <ol className="grid gap-4 p-8 sm:grid-cols-2">
@@ -386,7 +86,7 @@ function HowItWorksDialog() {
                             key={step.title}
                             className="flex gap-4 rounded-2xl border border-slate-100 bg-slate-50/60 p-4"
                         >
-                            <span className="from-brand-500 to-navy-700 flex size-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br font-bold text-white">
+                            <span className="bg-brand-600 flex size-10 shrink-0 items-center justify-center rounded-xl font-bold text-white">
                                 {index + 1}
                             </span>
                             <span className="flex flex-col gap-1">
@@ -411,169 +111,265 @@ function HowItWorksDialog() {
     );
 }
 
+function HeroPortrait() {
+    return (
+        <div className="relative mx-auto aspect-[5/6] w-full max-w-[34rem]">
+            <div
+                className="absolute inset-0 transition-transform duration-700 ease-out"
+                style={parallaxLayer(-10)}
+            >
+                <div className="animate-spin-slow border-brand-200 absolute top-[4%] left-[6%] size-[88%] rounded-full border border-dashed" />
+                <div className="from-brand-100 via-brand-50 to-cyan-glow/10 absolute top-[14%] right-[4%] bottom-[8%] left-[28%] rounded-t-full rounded-b-[2.5rem] bg-gradient-to-b" />
+            </div>
+
+            <div
+                className="absolute top-[8%] right-[10%] bottom-[4%] left-[22%] transition-transform duration-700 ease-out"
+                style={parallaxLayer(6)}
+            >
+                <div className="relative size-full overflow-hidden rounded-t-full rounded-b-[2.5rem] shadow-[0_40px_80px_-30px_rgb(10_35_66/0.45)] ring-8 ring-white">
+                    <img
+                        src="/images/marketing/hero-doctor.jpg"
+                        alt="A smiling healthcare professional in teal scrubs"
+                        fetchPriority="high"
+                        className="size-full object-cover object-top"
+                    />
+                    <div className="from-navy-900/25 absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t to-transparent" />
+                </div>
+            </div>
+
+            <div
+                className="absolute bottom-[10%] left-0 size-[34%] transition-transform duration-700 ease-out sm:left-[2%]"
+                style={parallaxLayer(14)}
+            >
+                <img
+                    src="/images/marketing/hero-physician.jpg"
+                    alt="A physician in a white coat"
+                    loading="lazy"
+                    className="size-full rounded-full object-cover object-top shadow-[0_24px_50px_-20px_rgb(10_35_66/0.5)] ring-8 ring-white"
+                />
+            </div>
+
+            <div
+                className="absolute top-[6%] left-[8%] transition-transform duration-700 ease-out"
+                style={parallaxLayer(18)}
+            >
+                <div className="animate-float flex size-20 items-center justify-center rounded-3xl bg-white p-3 shadow-[0_20px_50px_-20px_rgb(10_35_66/0.35)] ring-1 ring-slate-100">
+                    <AbMalinexMark className="h-full" />
+                </div>
+            </div>
+
+            <div
+                className="absolute top-[30%] -right-2 transition-transform duration-700 ease-out sm:-right-6"
+                style={parallaxLayer(22)}
+            >
+                <div className="animate-float flex items-center gap-3 rounded-2xl bg-white/90 p-3 pr-5 shadow-[0_20px_50px_-20px_rgb(10_35_66/0.35)] ring-1 ring-white backdrop-blur-xl [animation-delay:-2s]">
+                    <span className="flex size-11 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
+                        <ShieldCheck className="size-5" />
+                    </span>
+                    <span className="flex flex-col">
+                        <span className="text-navy-900 text-sm font-semibold">
+                            HIPAA Compliant
+                        </span>
+                        <span className="text-xs text-slate-500">
+                            Your data stays protected
+                        </span>
+                    </span>
+                </div>
+            </div>
+
+            <div
+                className="absolute right-[2%] bottom-[14%] transition-transform duration-700 ease-out"
+                style={parallaxLayer(16)}
+            >
+                <div className="animate-float flex items-center gap-3 rounded-2xl bg-white/90 p-3 pr-5 shadow-[0_20px_50px_-20px_rgb(10_35_66/0.35)] ring-1 ring-white backdrop-blur-xl [animation-delay:-4s]">
+                    <span className="bg-brand-50 text-brand-600 flex size-11 items-center justify-center rounded-xl">
+                        <HeartHandshake className="size-5" />
+                    </span>
+                    <span className="flex flex-col">
+                        <span className="text-navy-900 text-sm font-semibold">
+                            More time for patients
+                        </span>
+                        <span className="text-xs text-slate-500">
+                            We handle the billing
+                        </span>
+                    </span>
+                </div>
+            </div>
+        </div>
+    );
+}
+
 export default function HomeHero() {
     const sectionRef = useRef<HTMLElement>(null);
 
     const handlePointerMove = (event: ReactPointerEvent<HTMLElement>) => {
         const section = sectionRef.current;
 
-        if (!section) {
+        if (!section || event.pointerType !== 'mouse') {
             return;
         }
 
         const bounds = section.getBoundingClientRect();
-        section.style.setProperty(
-            '--hero-x',
-            `${event.clientX - bounds.left}px`,
-        );
-        section.style.setProperty(
-            '--hero-y',
-            `${event.clientY - bounds.top}px`,
-        );
+        const relativeX = (event.clientX - bounds.left) / bounds.width - 0.5;
+        const relativeY = (event.clientY - bounds.top) / bounds.height - 0.5;
+
+        section.style.setProperty('--pointer-x', relativeX.toFixed(3));
+        section.style.setProperty('--pointer-y', relativeY.toFixed(3));
     };
 
     return (
         <section
             ref={sectionRef}
             onPointerMove={handlePointerMove}
-            className="bg-navy-950 relative isolate overflow-hidden text-white"
+            className="relative isolate overflow-hidden bg-white"
         >
-            <div className="absolute inset-0 -z-10">
-                <img
-                    src="/images/marketing/hero-doctors-tech.jpg"
-                    alt=""
-                    fetchPriority="high"
-                    className="size-full scale-105 object-cover object-[70%_center] opacity-60 saturate-50"
-                />
-                <div className="bg-brand-600/40 absolute inset-0 mix-blend-color" />
-                <div className="from-navy-950 via-navy-950/90 to-navy-950/40 absolute inset-0 bg-gradient-to-r" />
-                <div className="from-navy-950 to-navy-950/70 absolute inset-0 bg-gradient-to-t via-transparent" />
-
-                <div className="animate-aurora bg-brand-500/30 absolute -top-40 left-[10%] size-[36rem] rounded-full blur-[120px]" />
-                <div className="animate-aurora bg-cyan-glow/20 absolute top-[20%] right-[-10%] size-[32rem] rounded-full blur-[120px] [animation-delay:-6s]" />
-                <div className="animate-aurora absolute bottom-[-20%] left-[35%] size-[30rem] rounded-full bg-emerald-400/15 blur-[120px] [animation-delay:-12s]" />
-
-                <div className="bg-grid-dark absolute inset-0" />
-                <ConstellationCanvas className="absolute inset-0" />
-                <div className="absolute inset-0 bg-[radial-gradient(600px_circle_at_var(--hero-x,70%)_var(--hero-y,40%),rgb(34_195_221/0.12),transparent_60%)]" />
+            <div className="pointer-events-none absolute inset-0 -z-10">
+                <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_85%_20%,var(--color-brand-50),transparent_70%),radial-gradient(ellipse_60%_50%_at_0%_100%,rgb(238_248_251/0.9),transparent_70%)]" />
+                <div className="animate-aurora bg-cyan-glow/10 absolute -top-32 right-[8%] size-[34rem] rounded-full blur-[110px]" />
+                <div className="animate-aurora bg-brand-200/30 absolute bottom-[-12rem] left-[-8rem] size-[30rem] rounded-full blur-[110px] [animation-delay:-9s]" />
+                <div className="absolute inset-0 bg-[radial-gradient(rgb(15_58_82/0.09)_1px,transparent_1px)] [mask-image:radial-gradient(ellipse_70%_60%_at_30%_40%,black,transparent_75%)] bg-[size:26px_26px]" />
+                <svg
+                    className="text-brand-200/70 absolute inset-x-0 bottom-0 h-48 w-full"
+                    viewBox="0 0 1440 200"
+                    preserveAspectRatio="none"
+                    fill="none"
+                >
+                    <path
+                        d="M0 150C220 90 420 190 720 130s520-120 720-40"
+                        stroke="currentColor"
+                    />
+                    <path
+                        d="M0 175C260 120 460 200 760 150s480-100 680-40"
+                        stroke="currentColor"
+                        strokeOpacity="0.5"
+                    />
+                </svg>
             </div>
 
-            <div className="relative mx-auto grid min-h-[min(100svh,58rem)] max-w-7xl items-center gap-16 px-4 pt-32 pb-16 sm:px-6 lg:grid-cols-[1.08fr_0.92fr] lg:pt-36">
+            <div className="relative mx-auto grid max-w-7xl items-center gap-14 px-4 pt-32 pb-16 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:pt-40 lg:pb-20">
                 <div className="flex min-w-0 flex-col items-start gap-7">
-                    <span className="animate-word-in text-brand-100 inline-flex items-center gap-2.5 rounded-full border border-white/15 bg-white/5 py-1.5 pr-4 pl-1.5 text-xs font-medium backdrop-blur-md sm:text-sm">
-                        <span className="from-cyan-glow text-navy-950 flex items-center gap-1.5 rounded-full bg-gradient-to-r to-emerald-400 px-2.5 py-0.5 text-xs font-bold">
-                            <BadgeCheck className="size-3.5" />
-                            HIPAA
+                    <span className="animate-word-in border-brand-100 text-brand-700 inline-flex items-center gap-2 rounded-full border bg-white/80 py-1.5 pr-4 pl-1.5 text-sm font-medium shadow-sm backdrop-blur">
+                        <span className="bg-brand-600 flex size-6 items-center justify-center rounded-full text-white">
+                            <ShieldCheck className="size-3.5" />
                         </span>
-                        Trusted by 500+ practices across the U.S.
+                        Medical Billing & RCM Specialists
                     </span>
 
-                    <h1 className="font-display text-[2.4rem] leading-[1.05] font-extrabold tracking-[-0.03em] text-white sm:text-6xl xl:text-[4rem]">
-                        <span className="block text-white/95">
-                            Smart Solutions for
-                        </span>
-                        <span className="block">
-                            Smarter <RotatingWord />
+                    <h1 className="font-display text-navy-900 text-[2.35rem] leading-[1.06] font-extrabold tracking-[-0.03em] sm:text-6xl xl:text-[4.25rem]">
+                        Smart Solutions for Smarter{' '}
+                        <span className="relative inline-block whitespace-nowrap">
+                            <span className="text-gradient-brand">
+                                Healthcare
+                            </span>
+                            <svg
+                                viewBox="0 0 300 20"
+                                preserveAspectRatio="none"
+                                className="absolute -bottom-2 left-0 h-3 w-full sm:-bottom-3 sm:h-4"
+                                aria-hidden="true"
+                            >
+                                <defs>
+                                    <linearGradient id="hero-underline">
+                                        <stop stopColor="#22c3dd" />
+                                        <stop offset="1" stopColor="#176f93" />
+                                    </linearGradient>
+                                </defs>
+                                <path
+                                    d="M3 14C60 5 150 2 297 9"
+                                    fill="none"
+                                    stroke="url(#hero-underline)"
+                                    strokeWidth="5"
+                                    strokeLinecap="round"
+                                    pathLength={1}
+                                    strokeDasharray={1}
+                                    className="animate-underline-draw"
+                                />
+                            </svg>
                         </span>
                     </h1>
 
-                    <p className="text-brand-100/80 max-w-xl text-lg leading-relaxed sm:text-xl">
-                        End-to-end medical billing and revenue cycle management
-                        that collects{' '}
-                        <span className="font-semibold text-white">
-                            up to 30% more
-                        </span>
-                        , cuts denials below{' '}
-                        <span className="font-semibold text-white">2%</span>,
-                        and gives your team time back for patients.
+                    <p className="max-w-xl text-lg leading-relaxed text-slate-600 sm:text-xl">
+                        End-to-end Medical Billing & RCM services that maximize
+                        revenue, reduce denials, and let you focus on what
+                        matters most – your patients.
                     </p>
 
                     <div className="flex flex-wrap items-center gap-3">
                         <BrandButton
                             href={contact()}
-                            className="btn-shine from-cyan-glow to-brand-400 text-navy-950 h-14 rounded-2xl bg-gradient-to-r px-7 text-base shadow-[0_0_0_1px_rgb(255_255_255/0.2),0_20px_50px_-12px_rgb(34_195_221/0.7)] hover:shadow-[0_0_0_1px_rgb(255_255_255/0.35),0_24px_60px_-10px_rgb(34_195_221/0.9)]"
+                            className="btn-shine h-14 rounded-2xl px-8 text-base"
                         >
-                            Get Your Free Audit
+                            Get Free Audit
                             <ArrowRight className="size-5 transition-transform group-hover:translate-x-1" />
                         </BrandButton>
                         <HowItWorksDialog />
                     </div>
 
-                    <div className="flex flex-wrap items-center gap-x-6 gap-y-4 pt-2">
-                        <div className="flex items-center gap-3">
-                            <div className="flex -space-x-2.5">
-                                {['SM', 'JP', 'PR', 'AK'].map(
-                                    (initials, index) => (
-                                        <span
-                                            key={initials}
-                                            className="border-navy-950 flex size-10 items-center justify-center rounded-full border-2 text-xs font-bold text-white"
-                                            style={{
-                                                background: `linear-gradient(135deg, ${['#22c3dd', '#1d8aaf', '#34d3b4', '#3aa5c6'][index]}, #0f3a66)`,
-                                            }}
-                                        >
-                                            {initials}
-                                        </span>
-                                    ),
-                                )}
-                            </div>
-                            <div className="flex flex-col">
-                                <span className="flex gap-0.5 text-amber-300">
-                                    {[0, 1, 2, 3, 4].map((star) => (
-                                        <Star
-                                            key={star}
-                                            className="size-4 fill-current"
-                                        />
-                                    ))}
-                                </span>
-                                <span className="text-brand-100/70 text-sm">
-                                    <span className="font-semibold text-white">
-                                        4.9/5
-                                    </span>{' '}
-                                    from 500+ reviews
-                                </span>
-                            </div>
-                        </div>
-                        <span className="hidden h-10 w-px bg-white/15 sm:block" />
-                        <div className="flex flex-wrap gap-2">
+                    <ul className="flex flex-wrap gap-x-5 gap-y-2">
+                        {reassurances.map((reassurance) => (
+                            <li
+                                key={reassurance}
+                                className="flex items-center gap-2 text-sm text-slate-600"
+                            >
+                                <CheckCircle2 className="text-brand-500 size-4" />
+                                {reassurance}
+                            </li>
+                        ))}
+                    </ul>
+
+                    <div className="flex items-center gap-4 border-t border-slate-100 pt-6">
+                        <div className="flex -space-x-3">
                             {[
-                                'AAPC Certified',
-                                'SOC 2 Type II',
-                                'BAA Ready',
-                            ].map((badge) => (
-                                <span
-                                    key={badge}
-                                    className="text-brand-100/90 flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/5 px-2.5 py-1.5 text-xs font-medium"
-                                >
-                                    <ShieldCheck className="text-cyan-glow size-3.5" />
-                                    {badge}
-                                </span>
+                                '/images/marketing/doctor-portrait.jpg',
+                                '/images/marketing/office.jpg',
+                                '/images/marketing/hero-physician.jpg',
+                            ].map((avatar) => (
+                                <img
+                                    key={avatar}
+                                    src={avatar}
+                                    alt=""
+                                    className="size-11 rounded-full object-cover object-top ring-4 ring-white"
+                                />
                             ))}
+                            <span className="bg-brand-600 flex size-11 items-center justify-center rounded-full text-xs font-bold text-white ring-4 ring-white">
+                                500+
+                            </span>
+                        </div>
+                        <div className="flex flex-col">
+                            <span className="flex gap-0.5 text-amber-400">
+                                {[0, 1, 2, 3, 4].map((star) => (
+                                    <Star
+                                        key={star}
+                                        className="size-4 fill-current"
+                                    />
+                                ))}
+                            </span>
+                            <span className="text-sm text-slate-600">
+                                Trusted by practices across the U.S.
+                            </span>
                         </div>
                     </div>
                 </div>
 
-                <LiveDashboard />
+                <HeroPortrait />
             </div>
 
-            <div className="relative mx-auto max-w-7xl px-4 pb-20 sm:px-6">
-                <div className="glass-dark grid grid-cols-2 gap-y-8 rounded-3xl px-4 py-8 sm:grid-cols-3 lg:grid-cols-5 lg:divide-x lg:divide-white/10">
+            <div className="relative mx-auto max-w-6xl px-4 pb-16 sm:px-6">
+                <div className="grid grid-cols-2 gap-y-8 rounded-3xl border border-white bg-white/80 px-4 py-8 shadow-[0_24px_60px_-28px_rgb(10_35_66/0.25)] backdrop-blur-xl sm:grid-cols-3 lg:grid-cols-5 lg:divide-x lg:divide-slate-100">
                     {heroStats.map((stat) => (
                         <div
                             key={stat.label}
                             className="flex flex-col items-center gap-1 px-4 text-center"
                         >
-                            <span className="font-display text-3xl font-extrabold text-white sm:text-4xl">
+                            <span className="font-display text-navy-900 text-3xl font-extrabold sm:text-4xl">
                                 <AnimatedCounter stat={stat} />
                             </span>
-                            <span className="text-brand-100/70 text-xs sm:text-sm">
+                            <span className="text-xs text-slate-500 sm:text-sm">
                                 {stat.label}
                             </span>
                         </div>
                     ))}
                 </div>
             </div>
-
-            <div className="to-navy-950 pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-b from-transparent" />
         </section>
     );
 }
