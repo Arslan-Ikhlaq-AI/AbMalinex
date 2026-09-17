@@ -1,3 +1,4 @@
+import { execSync } from 'node:child_process';
 import inertia from '@inertiajs/vite';
 import { wayfinder } from '@laravel/vite-plugin-wayfinder';
 import babel from '@rolldown/plugin-babel';
@@ -6,6 +7,24 @@ import react, { reactCompilerPreset } from '@vitejs/plugin-react';
 import laravel from 'laravel-vite-plugin';
 import { bunny } from 'laravel-vite-plugin/fonts';
 import { defineConfig, lazyPlugins } from 'vite-plus';
+
+/**
+ * Wayfinder generates route types by running `php artisan`. Hosts without
+ * PHP (such as Vercel's build image) use the committed generated files.
+ */
+function isPhpAvailable(): boolean {
+    try {
+        execSync('php -v', { stdio: 'ignore' });
+
+        return true;
+    } catch {
+        console.warn(
+            '[wayfinder] PHP not found; skipping route generation and using the committed files in resources/js/{actions,routes,wayfinder}.',
+        );
+
+        return false;
+    }
+}
 
 export default defineConfig({
     plugins: lazyPlugins(() => [
@@ -27,9 +46,10 @@ export default defineConfig({
             presets: [reactCompilerPreset()],
         }),
         tailwindcss(),
-        wayfinder({
-            formVariants: true,
-        }),
+        isPhpAvailable() &&
+            wayfinder({
+                formVariants: true,
+            }),
     ]),
     server: {
         watch: {
