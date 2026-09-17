@@ -8,7 +8,6 @@ import {
     Target,
 } from 'lucide-react';
 import AnimatedCounter from '@/components/marketing/animated-counter';
-import CtaBanner from '@/components/marketing/cta-banner';
 import PageHero from '@/components/marketing/page-hero';
 import Reveal from '@/components/marketing/reveal';
 import SectionHeading from '@/components/marketing/section-heading';
@@ -229,7 +228,7 @@ export default function About() {
                 </div>
             </section>
 
-            <CtaBanner title="Let's grow your practice together" />
+            <div className="h-24 lg:h-32" />
         </>
     );
 }

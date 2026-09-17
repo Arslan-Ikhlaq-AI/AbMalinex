@@ -1,7 +1,6 @@
 import { Head } from '@inertiajs/react';
 import { ChevronDown, Search, TrendingUp } from 'lucide-react';
 import { useState } from 'react';
-import CtaBanner from '@/components/marketing/cta-banner';
 import PageHero from '@/components/marketing/page-hero';
 import Reveal from '@/components/marketing/reveal';
 import { specialtyList } from '@/lib/marketing-content';
@@ -117,10 +116,7 @@ export default function Specialties() {
                 </div>
             </section>
 
-            <CtaBanner
-                title="Don't see your specialty?"
-                description="Our certified coders support 20+ specialties and sub-specialties. Let's talk about yours."
-            />
+            <div className="h-24 lg:h-32" />
         </>
     );
 }

@@ -2,7 +2,6 @@ import { Head } from '@inertiajs/react';
 import { ArrowRight, Check, CheckCircle2, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import BrandButton from '@/components/marketing/brand-button';
-import CtaBanner from '@/components/marketing/cta-banner';
 import PageHero from '@/components/marketing/page-hero';
 import Reveal from '@/components/marketing/reveal';
 import SectionHeading from '@/components/marketing/section-heading';
@@ -209,7 +208,7 @@ export default function Services() {
                 </div>
             </section>
 
-            <CtaBanner />
+            <div className="h-24 lg:h-32" />
         </>
     );
 }

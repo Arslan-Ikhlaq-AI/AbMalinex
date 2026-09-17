@@ -602,4 +602,19 @@ export const testimonialList = [
         name: 'Dr. Priya Raman',
         role: 'Owner, Summit Orthopedics',
     },
+    {
+        quote: 'Credentialing for our three new providers took weeks instead of months. The team is proactive and incredibly responsive.',
+        name: 'Angela Brooks',
+        role: 'Operations Director, Lakeside Family Medicine',
+    },
+    {
+        quote: 'Our clean claim rate went from 86% to 98% in the first quarter. The coding accuracy speaks for itself.',
+        name: 'Dr. Marcus Chen',
+        role: 'Founder, Pacific GI Associates',
+    },
+    {
+        quote: 'Transparent pricing, real reporting and people who actually pick up the phone. Exactly what we needed.',
+        name: 'Rachel Kim',
+        role: 'Administrator, Northside Pain Center',
+    },
 ];

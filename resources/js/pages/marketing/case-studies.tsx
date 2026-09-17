@@ -8,7 +8,6 @@ import {
 import { useState } from 'react';
 import AreaChart from '@/components/marketing/area-chart';
 import BrandButton from '@/components/marketing/brand-button';
-import CtaBanner from '@/components/marketing/cta-banner';
 import FilterPills from '@/components/marketing/filter-pills';
 import PageHero from '@/components/marketing/page-hero';
 import Reveal from '@/components/marketing/reveal';
@@ -163,10 +162,7 @@ export default function CaseStudies() {
                 </div>
             </section>
 
-            <CtaBanner
-                title="Your practice could be our next success story"
-                description="Start with a free audit and see exactly how much revenue you're leaving on the table."
-            />
+            <div className="h-24 lg:h-32" />
         </>
     );
 }

@@ -2,7 +2,6 @@ import { Head } from '@inertiajs/react';
 import { ArrowRight, Clock, Search } from 'lucide-react';
 import { useState } from 'react';
 import { brandButtonClasses } from '@/components/marketing/brand-button';
-import CtaBanner from '@/components/marketing/cta-banner';
 import FilterPills from '@/components/marketing/filter-pills';
 import PageHero from '@/components/marketing/page-hero';
 import Reveal from '@/components/marketing/reveal';
@@ -126,7 +125,7 @@ export default function Resources() {
                 </div>
             </section>
 
-            <CtaBanner />
+            <div className="h-24 lg:h-32" />
         </>
     );
 }
