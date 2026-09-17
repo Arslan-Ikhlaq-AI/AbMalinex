@@ -18,6 +18,10 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->encryptCookies(except: ['appearance', 'sidebar_state']);
 
+        if (env('VERCEL')) {
+            $middleware->trustProxies(at: '*');
+        }
+
         $middleware->web(append: [
             HandleAppearance::class,
             HandleInertiaRequests::class,
