@@ -33,4 +33,16 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->shouldRenderJsonWhen(
             fn (Request $request) => $request->is('api/*') || $request->expectsJson(),
         );
+
+        if (env('VERCEL')) {
+            $exceptions->report(function (Throwable $exception): void {
+                error_log(sprintf(
+                    '[laravel] %s: %s in %s:%d',
+                    $exception::class,
+                    $exception->getMessage(),
+                    $exception->getFile(),
+                    $exception->getLine(),
+                ));
+            });
+        }
     })->create();
