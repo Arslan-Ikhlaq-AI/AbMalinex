@@ -37,11 +37,12 @@ return Application::configure(basePath: dirname(__DIR__))
         if (env('VERCEL')) {
             $exceptions->report(function (Throwable $exception): void {
                 error_log(sprintf(
-                    '[laravel] %s: %s in %s:%d',
+                    "[laravel] %s: %s in %s:%d\n%s",
                     $exception::class,
                     $exception->getMessage(),
                     $exception->getFile(),
                     $exception->getLine(),
+                    $exception->getTraceAsString(),
                 ));
             });
         }
