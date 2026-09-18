@@ -47,27 +47,54 @@ if (
     return;
 }
 
+$setEnvironmentValue = function (string $key, string $value): void {
+    putenv("{$key}={$value}");
+    $_ENV[$key] = $value;
+    $_SERVER[$key] = $value;
+};
+
 $serverlessDefaults = [
     'APP_ENV' => 'production',
     'APP_DEBUG' => 'false',
+];
+
+foreach ($serverlessDefaults as $key => $value) {
+    if (getenv($key) === false && ! isset($_SERVER[$key])) {
+        $setEnvironmentValue($key, $value);
+    }
+}
+
+/*
+ * These always win over the project environment: the function filesystem is
+ * read-only, so file logs and framework cache files must live in /tmp.
+ */
+$serverlessOverrides = [
     'APP_CONFIG_CACHE' => '/tmp/config.php',
     'APP_EVENTS_CACHE' => '/tmp/events.php',
     'APP_PACKAGES_CACHE' => '/tmp/packages.php',
     'APP_ROUTES_CACHE' => '/tmp/routes.php',
     'APP_SERVICES_CACHE' => '/tmp/services.php',
     'VIEW_COMPILED_PATH' => '/tmp/views',
-    'CACHE_STORE' => 'array',
-    'SESSION_DRIVER' => 'cookie',
-    'QUEUE_CONNECTION' => 'sync',
     'LOG_CHANNEL' => 'stderr',
 ];
 
-foreach ($serverlessDefaults as $key => $value) {
-    if (getenv($key) === false) {
-        putenv("{$key}={$value}");
-        $_ENV[$key] = $value;
-        $_SERVER[$key] = $value;
-    }
+/*
+ * A SQLite file cannot persist between invocations, so database-backed
+ * sessions, cache and queues are swapped for stateless drivers unless a
+ * real database server is configured.
+ */
+$databaseConnection = getenv('DB_CONNECTION') ?: ($_SERVER['DB_CONNECTION'] ?? 'sqlite');
+
+if ($databaseConnection === 'sqlite') {
+    $serverlessOverrides += [
+        'SESSION_DRIVER' => 'cookie',
+        'CACHE_STORE' => 'array',
+        'QUEUE_CONNECTION' => 'sync',
+    ];
+}
+
+foreach ($serverlessOverrides as $key => $value) {
+    $setEnvironmentValue($key, $value);
 }
 
 if (! is_dir('/tmp/views')) {
