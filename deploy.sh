@@ -14,10 +14,17 @@ PHP=/opt/alt/php83/usr/bin/php
 [ -x "$PHP" ] || PHP=php
 echo "PHP: $($PHP -r 'echo PHP_VERSION;')"
 
+COMPOSER_PHAR="$HOME/bin/composer.phar"
 if [ -f /opt/cpanel/composer/bin/composer ]; then
     COMPOSER="$PHP /opt/cpanel/composer/bin/composer"
-else
+elif command -v composer >/dev/null 2>&1; then
     COMPOSER=composer
+else
+    if [ ! -f "$COMPOSER_PHAR" ]; then
+        mkdir -p "$HOME/bin"
+        curl -sS -o "$COMPOSER_PHAR" https://getcomposer.org/download/latest-stable/composer.phar
+    fi
+    COMPOSER="$PHP $COMPOSER_PHAR"
 fi
 
 if [ ! -f .env ]; then
