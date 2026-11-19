@@ -8,7 +8,12 @@ APP_DIR="$(pwd)"
 
 echo "=== Deploy started $(date) in $APP_DIR"
 
-command -v selectorctl >/dev/null 2>&1 && selectorctl --set-user-current=8.3 >/dev/null 2>&1 || true
+if command -v selectorctl >/dev/null 2>&1; then
+    selectorctl --set-user-current=8.3 2>&1 || true
+    echo "Web PHP (selector): $(selectorctl --user-current 2>&1 || true)"
+else
+    echo "selectorctl not found"
+fi
 
 PHP=/opt/alt/php83/usr/bin/php
 [ -x "$PHP" ] || PHP=php
