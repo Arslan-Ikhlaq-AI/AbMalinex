@@ -41,10 +41,34 @@ $PHP artisan storage:link 2>/dev/null || true
 $PHP artisan optimize:clear
 $PHP artisan optimize
 
-if [ -d "$HOME/public_html" ] && [ ! -L "$HOME/public_html" ]; then
-    mv "$HOME/public_html" "$HOME/public_html.bak.$(date +%s)"
-fi
-[ -L "$HOME/public_html" ] || ln -s "$APP_DIR/public" "$HOME/public_html"
+# The host's web server does not follow a symlinked document root, so public/
+# is copied into ~/public_html with a front controller pointing back at the app.
+WEB_ROOT="$HOME/public_html"
+[ -L "$WEB_ROOT" ] && rm "$WEB_ROOT"
+mkdir -p "$WEB_ROOT"
+rm -rf "$WEB_ROOT/build"
+cp -a public/. "$WEB_ROOT/"
+cat > "$WEB_ROOT/index.php" <<PHP
+<?php
+
+use Illuminate\Foundation\Application;
+use Illuminate\Http\Request;
+
+define('LARAVEL_START', microtime(true));
+
+if (file_exists(\$maintenance = '$APP_DIR/storage/framework/maintenance.php')) {
+    require \$maintenance;
+}
+
+require '$APP_DIR/vendor/autoload.php';
+
+/** @var Application \$app */
+\$app = require_once '$APP_DIR/bootstrap/app.php';
+
+\$app->usePublicPath(__DIR__);
+
+\$app->handleRequest(Request::capture());
+PHP
 
 $PHP artisan up
 
