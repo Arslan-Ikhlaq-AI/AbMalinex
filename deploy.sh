@@ -53,6 +53,8 @@ WEB_ROOT="$HOME/public_html"
 mkdir -p "$WEB_ROOT"
 rm -rf "$WEB_ROOT/build"
 cp -a public/. "$WEB_ROOT/"
+# The web server defaults to an older PHP; force PHP 8.3 (CloudLinux alt-php + LiteSpeed).
+{ echo 'AddHandler application/x-httpd-alt-php83___lsphp .php'; echo; cat public/.htaccess; } > "$WEB_ROOT/.htaccess"
 cat > "$WEB_ROOT/index.php" <<PHP
 <?php
 
