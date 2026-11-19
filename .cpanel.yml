@@ -1,0 +1,4 @@
+---
+deployment:
+  tasks:
+    - /bin/bash deploy.sh >> "$HOME/logs/deploy.log" 2>&1
